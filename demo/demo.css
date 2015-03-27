@@ -1,0 +1,22 @@
+
+body {
+	padding: .5em;
+	font-size: 14px;
+}
+
+#header {margin: 0 0 15px;}
+#header h1 {margin: 0;}
+#header p {margin: 0; font-size: 13px;}
+
+.demo-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+.demo-list li {
+	margin: 15px 0;
+	padding: 30px 0;
+	border: 1px solid #ccc;
+	font-size: 16px;
+	text-align: center;
+}
