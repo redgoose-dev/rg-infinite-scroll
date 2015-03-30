@@ -1,23 +1,21 @@
-function log(o){console.log(o);}
-
 /**
  * Infinite scroll
  * 스크롤에서 가장 아래쪽으로 내려가면 데이터를 추가로 불러들인다.
- * ex) var foo =
  *
- * @param {Array} $el
+ * @param {Array} el
  * @param {Object} options
  * @return void
  */
-function RGInfiniteScroll($el, options)
+function RGInfiniteScroll(el, options)
 {
-
 	var self = this;
-	var eventID = 'rgInfiniteScroll';
+	var eventID = '.rgInfiniteScroll';
 
 	// set public values
-	this.$self = $el;
+	this.$self = $(el);
 	this.sets = $.extend({}, this.defaults, options);
+	this.sets.ajaxOptions = $.extend({}, this.defaults.ajaxOptions, options.ajaxOptions);
+	this.sets.loadOptions = $.extend({}, this.defaults.loadOptions, options.loadOptions);
 	this.bottomY = 0;
 	this.current = this.sets.startNumber;
 
@@ -33,10 +31,10 @@ function RGInfiniteScroll($el, options)
 	 */
 	var scrollEvent = function()
 	{
-		self.$self.on('scroll.' + eventID, function(){
+		self.$self.on('scroll' + eventID, function(){
 			if ($(window).scrollTop() > self.bottomY) {
 				// off scroll event
-				$(this).off('scroll.' + eventID);
+				self.stop();
 				// update current number
 				self.current++;
 				// load data
@@ -49,13 +47,12 @@ function RGInfiniteScroll($el, options)
 					switch(self.sets.method)
 					{
 						case 'load':
-							self.load(self.current);
+							self.load(self.current, true);
 							break;
 						case 'ajax':
-							self.ajax(self.current);
+							self.ajax(self.current, true);
 							break;
 					}
-
 				}
 			}
 		});
@@ -68,10 +65,10 @@ function RGInfiniteScroll($el, options)
 	 */
 	var resizeEvent = function()
 	{
-		$(window).on('resize.' + eventID, function(){
+		$(window).on('resize' + eventID, function(){
 			self.bottomY = $(document).height() - $(window).height() - self.sets.bottomSpace;
 		});
-	}
+	};
 
 	/**
 	 * change url
@@ -85,6 +82,7 @@ function RGInfiniteScroll($el, options)
 		return url.replace('{page}', n);
 	};
 
+
 	/* ---------------------------------
 	 PUBLIC FUNCTIONS
 	 -------------------------------- */
@@ -95,31 +93,44 @@ function RGInfiniteScroll($el, options)
 	 * @Param {Number} n
 	 * @Return void
 	 */
-	this.load = function(n)
+	this.load = function(n, scroll)
 	{
 		var options = null;
-		var selector = '';
+		var selector = null;
 		if (this.sets.loadOptions)
 		{
 			options = this.sets.loadOptions;
+			selector = (options.selector) ? ' ' + options.selector : '';
 		}
 		else
 		{
 			return false;
 		}
 
-		selector = (options.selector) ? ' ' + options.selector : '';
-		$('<div>').load(changeUrl(this.sets.url, n) + selector, function(){
+		// update current
+		this.current += (!n) ? 1 : 0;
+
+		// n값이 없으면 this.current에서 한개 더한다.
+		n = (n) ? n : this.current + 1;
+
+		// load data
+		$('<div>').load(changeUrl(this.sets.url, n) + selector, function(data, status){
+			var more = (status == 'success');
 			if (self.sets.loadingAction)
 			{
 				self.sets.loadingAction(false);
 			}
-			options.target.append($(this).children());
-			if (options.done)
+			var $add = $(this).children();
+			options.target.append($add);
+			if (options.complete)
 			{
-				options.done($(this).children());
+				var result = options.complete($add);
+				more = (result) ? true : false;
 			}
-			self.action();
+			if (more && scroll)
+			{
+				self.run();
+			}
 		});
 	};
 
@@ -129,9 +140,17 @@ function RGInfiniteScroll($el, options)
 	 * @Param {Number} n
 	 * @Return void
 	 */
-	this.ajax = function(n)
+	this.ajax = function(n, scroll)
 	{
 		if (!this.sets.ajaxOptions) return false;
+
+		// update current
+		this.current += (!n) ? 1 : 0;
+
+		// n값이 없으면 this.current에서 한개 더한다.
+		n = (n) ? n : this.current;
+
+		// load data
 		$.ajax({
 			url : changeUrl(this.sets.url, n)
 			,cache : false
@@ -142,74 +161,92 @@ function RGInfiniteScroll($el, options)
 			{
 				self.sets.loadingAction(false);
 			}
-			if (self.sets.ajaxOptions.done)
+			if (self.sets.ajaxOptions.complete)
 			{
-				self.sets.ajaxOptions.done(data, status);
+				var more = self.sets.ajaxOptions.complete(data, status);
+				if (more && scroll)
+				{
+					self.run();
+				}
 			}
 		});
-	}
+	};
 
 	/**
-	 * Action event
+	 * run
 	 *
 	 * @Param {Boolean} sw : RGInfiniteScroll객체를 리턴받고싶으면 true
 	 * @Return {RGInfiniteScroll}
 	 */
-	this.action = function(sw)
+	this.run = function(sw)
 	{
 		// init events
 		scrollEvent();
 		resizeEvent();
 
 		// fire resize event
-		$(window).trigger('resize.' + eventID);
+		$(window).trigger('resize' + eventID);
 
 		return (sw) ? this : null;
 	};
 
 	/**
-	 * Stop event
+	 * stop
 	 *
 	 * @Return {RGInfiniteScroll}
 	 */
 	this.stop = function()
 	{
-		self.$self.off('scroll.' + eventID);
-		$(window).off('resize.' + eventID);
+		this.$self.off('scroll' + eventID);
+		$(window).off('resize' + eventID);
 	};
+
+	/**
+	 * go to page
+	 *
+	 * @Param {Number} n : 값이 없으면 초기 설정한 값으로 설정한다.
+	 * @Return void
+	 */
+	this.setPageNumber = function(n)
+	{
+		this.current = (n) ? n : this.sets.startNumber;
+	};
+
+	// run event
+	this.run();
 }
 
 // default values
 RGInfiniteScroll.prototype.defaults = {
 	bottomSpace : 100
-	,url : './data.html?page={page}&param2=value2'
+	,url : null
 	,startNumber : 1
 	,method : 'load'
 	,ajaxOptions : {
 		data : ''
 		,dataType : ''
-		,done : function(data, status){  }
+		,complete : function(data, status) {
+			console.log(data);
+		}
 	}
 	,loadOptions : {
-		target : $('#body')
-		,selector : '#data li'
+		target : null
+		,selector : ''
+		,complete : function(data) {
+			console.log(data);
+			return true;
+		}
 	}
 	,onDataLoad : null
 	,loadingAction : function(sw) {
-		if (sw == true)
-		{
-			// loading...
-		}
-		else
-		{
-			// load complete
-		}
+		// sw is true are "loading.."
+		// sw is false are "load complete"
 	}
-};
+}
 
 // set jQuery plugin
-(function($) {
+;(function($) {
 	return $.fn.rgInfiniteScroll = function(options) {
-		return new RGInfiniteScroll(this, options).action(true);
+		return new RGInfiniteScroll($(this), options).run(true);
 	};
 })(jQuery);

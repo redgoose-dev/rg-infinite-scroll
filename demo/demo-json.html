@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head lang="ko">
+<meta charset="UTF-8">
+<title>RG Infinite scroll demo</title>
+<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, width=device-width">
+<link rel="stylesheet" href="demo.css"/>
+</head>
+<body>
+<main>
+	<header id="header">
+		<h1>RG Infinite scroll demo</h1>
+		<p>
+			하단 끝으로 스크롤하면 데이터를 추가로 불러오는 스크립트 데모.<br/>
+			$.ajax()메서드를 사용하여 불러올 파일의 json데이터를 가져오고,
+		</p>
+	</header>
+
+	<div class="container">
+		<ul class="demo-list" id="body">
+			<li>1</li>
+			<li>2</li>
+			<li>3</li>
+			<li>4</li>
+			<li>5</li>
+		</ul>
+		<nav>
+			<button class="demo-more" id="more">more items</button>
+		</nav>
+	</div>
+</main>
+
+<script src="../src/vendor/jquery-2.1.3.min.js"></script>
+<script src="../src/js/InfiniteScroll.js"></script>
+<script>
+function log(o){console.log(o);}
+(function($){
+
+	var body = new RGInfiniteScroll($(document), {
+		url : './data.json?page={page}'
+		,method : 'ajax'
+		,ajaxOptions : {
+			data : 'param2=value2'
+			,dataType : 'json'
+			,complete : function(data, status) {
+				for (var key in data.items)
+				{
+					$('#body').append('<li>add item #' + key + '</li>');
+				}
+				return true;
+			}
+		}
+	});
+
+	$('#more').on('click', function(){
+		body.ajax();
+	});
+
+})(jQuery);
+</script>
+</body>
+</html>

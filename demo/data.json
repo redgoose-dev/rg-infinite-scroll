@@ -1,0 +1,25 @@
+{
+	"foo" : "bar"
+	,"items" : [
+		{
+			"name" : "item #1",
+			"value" : "bar"
+		},
+		{
+			"name" : "item #2",
+			"value" : "bar"
+		},
+		{
+			"name" : "item #3",
+			"value" : "bar"
+		},
+		{
+			"name" : "item #4",
+			"value" : "bar"
+		},
+		{
+			"name" : "item #5",
+			"value" : "bar"
+		}
+	]
+}
