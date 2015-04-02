@@ -33,8 +33,6 @@ function RGInfiniteScroll(el, options)
 	{
 		self.$self.on('scroll' + eventID, function(){
 			if ($(window).scrollTop() > self.bottomY) {
-				// off scroll event
-				self.stop();
 				// update current number
 				self.current++;
 				// load data
@@ -47,10 +45,10 @@ function RGInfiniteScroll(el, options)
 					switch(self.sets.method)
 					{
 						case 'load':
-							self.load(self.current, true);
+							self.load(self.current);
 							break;
 						case 'ajax':
-							self.ajax(self.current, true);
+							self.ajax(self.current);
 							break;
 					}
 				}
@@ -93,7 +91,7 @@ function RGInfiniteScroll(el, options)
 	 * @Param {Number} n
 	 * @Return void
 	 */
-	this.load = function(n, scroll)
+	this.load = function(n)
 	{
 		var options = null;
 		var selector = null;
@@ -106,6 +104,9 @@ function RGInfiniteScroll(el, options)
 		{
 			return false;
 		}
+
+		// stop scroll event
+		self.stop();
 
 		// update current
 		this.current += (!n) ? 1 : 0;
@@ -127,7 +128,7 @@ function RGInfiniteScroll(el, options)
 				var result = options.complete($add);
 				more = (result) ? true : false;
 			}
-			if (more && scroll)
+			if (more)
 			{
 				self.run();
 			}
@@ -140,9 +141,12 @@ function RGInfiniteScroll(el, options)
 	 * @Param {Number} n
 	 * @Return void
 	 */
-	this.ajax = function(n, scroll)
+	this.ajax = function(n)
 	{
 		if (!this.sets.ajaxOptions) return false;
+
+		// stop scroll event
+		self.stop();
 
 		// update current
 		this.current += (!n) ? 1 : 0;
@@ -164,7 +168,7 @@ function RGInfiniteScroll(el, options)
 			if (self.sets.ajaxOptions.complete)
 			{
 				var more = self.sets.ajaxOptions.complete(data, status);
-				if (more && scroll)
+				if (more)
 				{
 					self.run();
 				}
@@ -180,6 +184,9 @@ function RGInfiniteScroll(el, options)
 	 */
 	this.run = function(sw)
 	{
+		// stop event
+		this.stop();
+
 		// init events
 		scrollEvent();
 		resizeEvent();
@@ -218,9 +225,9 @@ function RGInfiniteScroll(el, options)
 
 // default values
 RGInfiniteScroll.prototype.defaults = {
-	bottomSpace : 100
+	bottomSpace : 50
 	,url : null
-	,startNumber : 1
+	,startNumber : 2
 	,method : 'load'
 	,ajaxOptions : {
 		data : ''
@@ -237,7 +244,6 @@ RGInfiniteScroll.prototype.defaults = {
 			return true;
 		}
 	}
-	,onDataLoad : null
 	,loadingAction : function(sw) {
 		// sw is true are "loading.."
 		// sw is false are "load complete"
