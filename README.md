@@ -4,7 +4,7 @@
 버튼으로도 추가로 스크롤 이벤트를 실행할 수 있습니다.  
 
 
-# Example
+## Example
 
 먼저 파일 두개를 준비합니다. 예) `main.html, data.html`  
 `main.html`파일은 컨텐츠의 목록이며 이 페이지에서 `data.html`의 내용을 불러옵니다.
@@ -28,7 +28,7 @@ $(document).rgInfiniteScroll(options);
 ```
 
 
-# Options
+## Options
 RGInfiniteScroll를 사용할때의 필요한 옵션들이 있습니다. 아래 목록을 참고해 주세요.
 
 * __bottomSpace__ {Number} - default: 50  
@@ -91,23 +91,23 @@ default : function(sw) {
 ```
 
 
-# Method
+## Method
 별도의 클릭이벤트나 다른 이벤트를 통하여 RGInfiniteScroll의 이벤트를 제어할 수 있습니다.
 
-### load( pageNumber )
+#### load( pageNumber )
 url의 엘리먼트를 불러와 목록에서 추가합니다. 인자값은 페이지번호로 설정할 수 있습니다.
 
-### ajax( pageNumber )
+#### ajax( pageNumber )
 url의 데이터를 불러와 callback함수를 실행합니다.
 
-### run()
+#### run()
 스크롤 이벤트를 작동합니다.
 
-### stop()
+#### stop()
 스크롤 이벤트를 중단합니다.
 
-### setPageNumber( pageNumber )
+#### setPageNumber( pageNumber )
 현재 페이지를 변경합니다.
 
-### getPageNumber()
+#### getPageNumber()
 현재 페이지를 가져옵니다. 숫자형으로 반환해줍니다.
