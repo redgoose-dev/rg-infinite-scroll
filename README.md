@@ -4,6 +4,11 @@
 버튼으로도 추가로 스크롤 이벤트를 실행할 수 있습니다.  
 
 
+## Demo
+http://lab.redgoose.me/RG-InfiniteScroll/demo/demo-load.html  
+http://lab.redgoose.me/RG-InfiniteScroll/demo/demo-ajax.html
+
+
 ## Example
 
 먼저 파일 두개를 준비합니다. 예) `main.html, data.html`  
