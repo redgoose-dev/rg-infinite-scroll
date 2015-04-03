@@ -6,7 +6,7 @@
 
 ## Demo
 http://lab.redgoose.me/RG-InfiniteScroll/demo/demo-load.html  
-http://lab.redgoose.me/RG-InfiniteScroll/demo/demo-ajax.html
+http://lab.redgoose.me/RG-InfiniteScroll/demo/demo-json.html
 
 
 ## Example
