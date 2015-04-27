@@ -10,13 +10,13 @@ function RGInfiniteScroll(el, options)
 {
 	var self = this;
 	var eventID = '.rgInfiniteScroll';
+	var bottomY = 0;
 
 	// set public values
 	this.$self = $(el);
 	this.sets = $.extend({}, this.defaults, options);
 	this.sets.ajaxOptions = $.extend({}, this.defaults.ajaxOptions, options.ajaxOptions);
 	this.sets.loadOptions = $.extend({}, this.defaults.loadOptions, options.loadOptions);
-	this.bottomY = 0;
 	this.current = this.sets.startNumber;
 
 
@@ -32,7 +32,11 @@ function RGInfiniteScroll(el, options)
 	var scrollEvent = function()
 	{
 		self.$self.on('scroll' + eventID, function(){
-			if ($(window).scrollTop() > self.bottomY) {
+
+			// set bottom y
+			bottomY = $(document).height() - $(window).height() - self.sets.bottomSpace;
+
+			if ($(window).scrollTop() > bottomY) {
 				// update current number
 				self.current++;
 				// load data
@@ -53,18 +57,6 @@ function RGInfiniteScroll(el, options)
 					}
 				}
 			}
-		});
-	};
-
-	/**
-	 * init resize event
-	 *
-	 * @Return void
-	 */
-	var resizeEvent = function()
-	{
-		$(window).on('resize' + eventID, function(){
-			self.bottomY = $(document).height() - $(window).height() - self.sets.bottomSpace;
 		});
 	};
 
@@ -189,10 +181,6 @@ function RGInfiniteScroll(el, options)
 
 		// init events
 		scrollEvent();
-		resizeEvent();
-
-		// fire resize event
-		$(window).trigger('resize' + eventID);
 
 		return (sw) ? this : null;
 	};
@@ -205,7 +193,6 @@ function RGInfiniteScroll(el, options)
 	this.stop = function()
 	{
 		this.$self.off('scroll' + eventID);
-		$(window).off('resize' + eventID);
 	};
 
 	/**
