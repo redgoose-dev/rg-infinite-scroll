@@ -1,4 +1,4 @@
-# RGInfiniteScroll
+# rg-InfiniteScroll
 
 스크롤에서 가장 아래쪽으로 내려가면 데이터를 추가로 불러들이는 jQuery 라이브러리를 사용한 플러그인입니다.  
 버튼으로도 추가로 스크롤 이벤트를 실행할 수 있습니다.  
