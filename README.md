@@ -6,8 +6,8 @@
 
 ## Demo
 
-- http://lab.redgoose.me/rg-infinite-scroll/demo/demo-load.html
-- http://lab.redgoose.me/rg-infinite-scroll/demo/demo-json.html
+- https://lab.redgoose.me/rg-infinite-scroll/demo/demo-load.html
+- https://lab.redgoose.me/rg-infinite-scroll/demo/demo-json.html
 
 
 ## Example
